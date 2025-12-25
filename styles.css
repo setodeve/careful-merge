@@ -1,0 +1,263 @@
+/* Careful Merge - 確認ダイアログスタイル */
+
+.careful-merge-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  animation: careful-merge-fade-in 0.15s ease-out;
+}
+
+@keyframes careful-merge-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes careful-merge-slide-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.careful-merge-dialog {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  max-width: 440px;
+  width: 90%;
+  overflow: hidden;
+  animation: careful-merge-slide-in 0.2s ease-out;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .careful-merge-dialog {
+    background-color: #161b22;
+    color: #c9d1d9;
+  }
+}
+
+/* GitHub のダークモードクラスにも対応 */
+[data-color-mode="dark"] .careful-merge-dialog,
+[data-dark-theme="dark"] .careful-merge-dialog,
+.dark-theme .careful-merge-dialog {
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+
+.careful-merge-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #d0d7de;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-header {
+    border-bottom-color: #30363d;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-header,
+[data-dark-theme="dark"] .careful-merge-header {
+  border-bottom-color: #30363d;
+}
+
+.careful-merge-icon {
+  font-size: 28px;
+}
+
+.careful-merge-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2328;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-header h2 {
+    color: #e6edf3;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-header h2,
+[data-dark-theme="dark"] .careful-merge-header h2 {
+  color: #e6edf3;
+}
+
+.careful-merge-content {
+  padding: 24px;
+}
+
+.careful-merge-type {
+  background-color: #f6f8fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-type {
+    background-color: #21262d;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-type,
+[data-dark-theme="dark"] .careful-merge-type {
+  background-color: #21262d;
+}
+
+.careful-merge-type strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: #1f2328;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-type strong {
+    color: #e6edf3;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-type strong,
+[data-dark-theme="dark"] .careful-merge-type strong {
+  color: #e6edf3;
+}
+
+.careful-merge-type p {
+  margin: 0;
+  font-size: 14px;
+  color: #656d76;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-type p {
+    color: #8b949e;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-type p,
+[data-dark-theme="dark"] .careful-merge-type p {
+  color: #8b949e;
+}
+
+.careful-merge-question {
+  margin: 0;
+  font-size: 14px;
+  color: #1f2328;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-question {
+    color: #c9d1d9;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-question,
+[data-dark-theme="dark"] .careful-merge-question {
+  color: #c9d1d9;
+}
+
+.careful-merge-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  background-color: #f6f8fa;
+  border-top: 1px solid #d0d7de;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-actions {
+    background-color: #161b22;
+    border-top-color: #30363d;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-actions,
+[data-dark-theme="dark"] .careful-merge-actions {
+  background-color: #161b22;
+  border-top-color: #30363d;
+}
+
+.careful-merge-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.careful-merge-btn:focus {
+  outline: 2px solid #0969da;
+  outline-offset: 2px;
+}
+
+.careful-merge-btn-cancel {
+  background-color: #f6f8fa;
+  color: #24292f;
+  border-color: #d0d7de;
+}
+
+.careful-merge-btn-cancel:hover {
+  background-color: #f3f4f6;
+  border-color: #1b1f2326;
+}
+
+@media (prefers-color-scheme: dark) {
+  .careful-merge-btn-cancel {
+    background-color: #21262d;
+    color: #c9d1d9;
+    border-color: #30363d;
+  }
+
+  .careful-merge-btn-cancel:hover {
+    background-color: #30363d;
+    border-color: #8b949e;
+  }
+}
+
+[data-color-mode="dark"] .careful-merge-btn-cancel,
+[data-dark-theme="dark"] .careful-merge-btn-cancel {
+  background-color: #21262d;
+  color: #c9d1d9;
+  border-color: #30363d;
+}
+
+[data-color-mode="dark"] .careful-merge-btn-cancel:hover,
+[data-dark-theme="dark"] .careful-merge-btn-cancel:hover {
+  background-color: #30363d;
+  border-color: #8b949e;
+}
+
+.careful-merge-btn-confirm {
+  color: #ffffff;
+  border: none;
+}
+
+.careful-merge-btn-confirm:hover {
+  filter: brightness(1.1);
+}
+
+.careful-merge-btn-confirm:active {
+  filter: brightness(0.95);
+}
