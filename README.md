@@ -2,7 +2,7 @@
 
 [日本語版はこちら](README_ja.md)
 
-A browser extension that displays a confirmation dialog when clicking merge buttons on GitHub pull requests, showing the selected merge method before proceeding.
+A Chrome extension that displays a confirmation dialog when clicking merge buttons on GitHub pull requests, showing the selected merge method before proceeding.
 
 ## Features
 
@@ -13,11 +13,24 @@ A browser extension that displays a confirmation dialog when clicking merge butt
 
 ## Installation
 
-1. Download or clone this repository
-2. Open `chrome://extensions` in Chrome
-3. Enable "Developer mode" in the top right
-4. Click "Load unpacked"
-5. Select the downloaded folder
+### From Source
+
+1. Clone this repository
+2. Install dependencies: `pnpm install`
+3. Build the extension: `pnpm build`
+4. Open `chrome://extensions` in Chrome
+5. Enable "Developer mode" in the top right
+6. Click "Load unpacked"
+7. Select the `.output/chrome-mv3` folder
+
+## Development
+
+```bash
+pnpm install         # Install dependencies
+pnpm dev             # Start development mode with HMR
+pnpm build           # Build for production
+pnpm storybook       # Preview components in Storybook
+```
 
 ## Usage
 
@@ -28,20 +41,35 @@ A browser extension that displays a confirmation dialog when clicking merge butt
 
 ## Supported Merge Methods
 
-| Merge Method | Description |
-|--------------|-------------|
-| Merge commit | Preserves all commits and creates a merge commit |
-| Squash and merge | Combines all commits into one and merges |
-| Rebase and merge | Rebases commits onto the base branch and merges |
+| Merge Method       | Description                                       |
+| ------------------ | ------------------------------------------------- |
+| Merge commit       | Preserves all commits and creates a merge commit  |
+| Squash and merge   | Combines all commits into one and merges          |
+| Rebase and merge   | Rebases commits onto the base branch and merges   |
 
-## File Structure
+## Tech Stack
 
-```
+- [WXT](https://wxt.dev/) - web extension framework
+- TypeScript
+- [Storybook](https://storybook.js.org/) - Component preview
+
+## Project Structure
+
+```text
 careful-merge/
-├── manifest.json   # Extension configuration
-├── content.js      # Main script
-├── styles.css      # Dialog styles
-└── README.md       # This file
+├── entrypoints/
+│   └── content.ts          # Content script
+├── components/
+│   └── ConfirmDialog.ts    # Dialog component
+├── types/
+│   └── index.ts            # Type definitions
+├── assets/
+│   └── styles.css          # Dialog styles
+├── stories/
+│   └── ConfirmDialog.stories.ts
+├── .storybook/             # Storybook config
+├── wxt.config.ts           # WXT config
+└── package.json
 ```
 
 ## License

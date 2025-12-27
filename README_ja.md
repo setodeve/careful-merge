@@ -2,7 +2,7 @@
 
 [English version](README.md)
 
-GitHubのプルリクエストでマージボタンをクリックした際に、選択したマージ方法を確認するダイアログを表示するブラウザ拡張機能です。
+GitHubのプルリクエストでマージボタンをクリックした際に、選択したマージ方法を確認するダイアログを表示するChrome拡張機能です。
 
 ## 機能
 
@@ -13,11 +13,24 @@ GitHubのプルリクエストでマージボタンをクリックした際に�
 
 ## インストール方法
 
-1. このリポジトリをダウンロードまたはクローン
-2. Chrome で `chrome://extensions` を開く
-3. 右上の「デベロッパーモード」を有効にする
-4. 「パッケージ化されていない拡張機能を読み込む」をクリック
-5. ダウンロードしたフォルダを選択
+### ソースから
+
+1. このリポジトリをクローン
+2. 依存関係をインストール: `pnpm install`
+3. 拡張機能をビルド: `pnpm build`
+4. Chrome で `chrome://extensions` を開く
+5. 右上の「デベロッパーモード」を有効にする
+6. 「パッケージ化されていない拡張機能を読み込む」をクリック
+7. `.output/chrome-mv3` フォルダを選択
+
+## 開発
+
+```bash
+pnpm install         # 依存関係のインストール
+pnpm dev             # 開発モード（HMR対応）
+pnpm build           # 本番ビルド
+pnpm storybook       # Storybookでコンポーネントをプレビュー
+```
 
 ## 使い方
 
@@ -28,20 +41,35 @@ GitHubのプルリクエストでマージボタンをクリックした際に�
 
 ## 対応するマージ方法
 
-| マージ方法 | 説明 |
-| ---------- | ---- |
-| Merge commit | すべてのコミットを保持してマージコミットを作成 |
-| Squash and merge | すべてのコミットを1つにまとめてマージ |
-| Rebase and merge | コミットをベースブランチにリベースしてマージ |
+| マージ方法         | 説明                                             |
+| ------------------ | ------------------------------------------------ |
+| Merge commit       | すべてのコミットを保持してマージコミットを作成   |
+| Squash and merge   | すべてのコミットを1つにまとめてマージ            |
+| Rebase and merge   | コミットをベースブランチにリベースしてマージ     |
 
-## ファイル構成
+## 技術スタック
+
+- [WXT](https://wxt.dev/) - Web拡張機能フレームワーク
+- TypeScript
+- [Storybook](https://storybook.js.org/) - コンポーネントプレビュー
+
+## プロジェクト構成
 
 ```text
 careful-merge/
-├── manifest.json   # 拡張機能の設定ファイル
-├── content.js      # メインスクリプト
-├── styles.css      # ダイアログのスタイル
-└── README.md       # 英語版README
+├── entrypoints/
+│   └── content.ts          # コンテントスクリプト
+├── components/
+│   └── ConfirmDialog.ts    # ダイアログコンポーネント
+├── types/
+│   └── index.ts            # 型定義
+├── assets/
+│   └── styles.css          # ダイアログのスタイル
+├── stories/
+│   └── ConfirmDialog.stories.ts
+├── .storybook/             # Storybook設定
+├── wxt.config.ts           # WXT設定
+└── package.json
 ```
 
 ## ライセンス

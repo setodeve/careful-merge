@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# WXT build output
+.output
+.wxt
+
+# Storybook
+storybook-static
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
