@@ -50,21 +50,26 @@ export function createConfirmDialog(
   const dialog = document.createElement('div');
   dialog.className = 'careful-merge-dialog';
 
+  // Accessibility attributes
+  dialog.setAttribute('role', 'dialog');
+  dialog.setAttribute('aria-modal', 'true');
+  dialog.setAttribute('aria-labelledby', 'careful-merge-title');
+  dialog.setAttribute('aria-describedby', 'careful-merge-description');
+
   dialog.innerHTML = `
-    <div class="careful-merge-header">
-      <span class="careful-merge-icon" style="color: ${typeInfo.color}">${typeInfo.icon}</span>
-      <h2>Confirm Merge Method</h2>
+    <div class="careful-merge-header" style="border-left: 4px solid ${typeInfo.color}">
+      <span class="careful-merge-icon" style="color: ${typeInfo.color}" aria-hidden="true">${typeInfo.icon}</span>
+      <div class="careful-merge-type-info">
+        <strong id="careful-merge-title" class="careful-merge-type-name">${typeInfo.name}</strong>
+        <p class="careful-merge-type-desc">${typeInfo.description}</p>
+      </div>
     </div>
     <div class="careful-merge-content">
-      <div class="careful-merge-type" style="border-left: 4px solid ${typeInfo.color}">
-        <strong>${typeInfo.name}</strong>
-        <p>${typeInfo.description}</p>
-      </div>
-      <p class="careful-merge-question">Are you sure you want to proceed with this merge method?</p>
+      <p id="careful-merge-description" class="careful-merge-question">Proceed with this merge method?</p>
     </div>
     <div class="careful-merge-actions">
-      <button class="careful-merge-btn careful-merge-btn-cancel">Cancel</button>
-      <button class="careful-merge-btn careful-merge-btn-confirm" style="background-color: ${typeInfo.color}">
+      <button class="careful-merge-btn careful-merge-btn-cancel" aria-label="Cancel merge">Cancel</button>
+      <button class="careful-merge-btn careful-merge-btn-confirm" style="background-color: ${typeInfo.color}" aria-label="Confirm ${typeInfo.name}">
         Confirm ${typeInfo.name}
       </button>
     </div>
@@ -75,33 +80,65 @@ export function createConfirmDialog(
   const cancelBtn = dialog.querySelector('.careful-merge-btn-cancel') as HTMLButtonElement;
   const confirmBtn = dialog.querySelector('.careful-merge-btn-confirm') as HTMLButtonElement;
 
-  cancelBtn.addEventListener('click', () => {
+  // Cleanup function to remove event listeners
+  const cleanup = () => {
+    document.removeEventListener('keydown', handleKeydown);
     overlay.remove();
+  };
+
+  cancelBtn.addEventListener('click', () => {
+    cleanup();
     onCancel();
   });
 
   confirmBtn.addEventListener('click', () => {
-    overlay.remove();
+    cleanup();
     onConfirm();
   });
 
   // Cancel on overlay click
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) {
-      overlay.remove();
+      cleanup();
       onCancel();
     }
   });
 
-  // Cancel on Escape key
-  const handleEsc = (e: KeyboardEvent) => {
+  // Keyboard event handler (Escape to cancel, Tab for focus trap)
+  const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
-      overlay.remove();
+      cleanup();
       onCancel();
-      document.removeEventListener('keydown', handleEsc);
+      return;
+    }
+
+    // Focus trap: keep focus within dialog
+    if (e.key === 'Tab') {
+      const focusableElements = [cancelBtn, confirmBtn];
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        // Shift + Tab: loop from first to last
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        // Tab: loop from last to first
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
     }
   };
-  document.addEventListener('keydown', handleEsc);
+  document.addEventListener('keydown', handleKeydown);
+
+  // Set initial focus to cancel button (safer default)
+  requestAnimationFrame(() => {
+    cancelBtn.focus();
+  });
 
   return overlay;
 }

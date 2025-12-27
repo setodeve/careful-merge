@@ -51,38 +51,46 @@ export const RebaseAndMerge: Story = {
   },
 };
 
+// Dark mode decorator with cleanup
+const withDarkMode = (story: () => string | Node) => {
+  document.documentElement.setAttribute('data-color-mode', 'dark');
+
+  // Cleanup when story unmounts
+  const container = story();
+  if (container instanceof HTMLElement) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.removedNodes.forEach((node) => {
+          if (node === container || (node as Element).contains?.(container)) {
+            document.documentElement.removeAttribute('data-color-mode');
+            observer.disconnect();
+          }
+        });
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  return container;
+};
+
 export const DarkMode: Story = {
   args: {
     mergeType: 'merge',
   },
-  decorators: [
-    (story) => {
-      document.documentElement.setAttribute('data-color-mode', 'dark');
-      return story();
-    },
-  ],
+  decorators: [withDarkMode],
 };
 
 export const DarkModeSquash: Story = {
   args: {
     mergeType: 'squash',
   },
-  decorators: [
-    (story) => {
-      document.documentElement.setAttribute('data-color-mode', 'dark');
-      return story();
-    },
-  ],
+  decorators: [withDarkMode],
 };
 
 export const DarkModeRebase: Story = {
   args: {
     mergeType: 'rebase',
   },
-  decorators: [
-    (story) => {
-      document.documentElement.setAttribute('data-color-mode', 'dark');
-      return story();
-    },
-  ],
+  decorators: [withDarkMode],
 };

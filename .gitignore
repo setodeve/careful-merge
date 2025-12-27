@@ -5,6 +5,9 @@ node_modules/
 .output
 .wxt
 
+# Playwright
+.playwright-mcp
+
 # Storybook
 storybook-static
 
