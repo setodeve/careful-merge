@@ -4,26 +4,60 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Careful Merge is a browser extension (Chrome/Edge/Firefox) that adds a confirmation dialog when clicking merge buttons on GitHub pull requests. It helps prevent accidental merges by showing the selected merge method (merge commit, squash, rebase) before proceeding.
+Careful Merge is a Chrome browser extension that adds a confirmation dialog when clicking merge buttons on GitHub pull requests. It helps prevent accidental merges by showing the selected merge method (merge commit, squash, rebase) before proceeding.
 
-## Development
+## Tech Stack
 
-This is a vanilla JavaScript browser extension with no build step, bundler, or dependencies.
+- **WXT** - Next-gen web extension framework (Vite-based)
+- **TypeScript** - Type-safe JavaScript
+- **Storybook** - Component preview and documentation
 
-**Manual testing:**
-1. Load the extension unpacked in Chrome (`chrome://extensions` with developer mode) or Firefox (`about:debugging`)
-2. Navigate to any GitHub PR page to test merge button interception
+## Development Commands
+
+```bash
+pnpm dev            # Start development mode with HMR
+pnpm build          # Build extension for production
+pnpm zip            # Create distributable ZIP
+pnpm storybook      # Preview components in Storybook
+pnpm build-storybook # Build static Storybook
+```
+
+## Manual Testing
+
+1. Run `pnpm build`
+2. Load `.output/chrome-mv3` folder in Chrome (`chrome://extensions` with developer mode)
+3. Navigate to any GitHub PR page to test merge button interception
 
 ## Architecture
 
-**content.js** - Single IIFE that:
-- Defines `MERGE_TYPES` config (name, description, icon, color for each merge method)
-- `createConfirmDialog()` - Builds modal DOM with event handlers (confirm/cancel/escape/overlay click)
+```
+careful-merge/
+├── entrypoints/
+│   └── content.ts      # Content script entry point
+├── components/
+│   └── ConfirmDialog.ts # Dialog component (createConfirmDialog, detectMergeType)
+├── types/
+│   └── index.ts        # TypeScript type definitions
+├── assets/
+│   └── styles.css      # Dialog styling with dark mode support
+├── stories/
+│   └── ConfirmDialog.stories.ts # Storybook stories
+├── .storybook/         # Storybook configuration
+├── wxt.config.ts       # WXT configuration
+└── tsconfig.json       # TypeScript configuration
+```
+
+### Key Components
+
+**components/ConfirmDialog.ts**
+- `MERGE_TYPES` - Configuration object with name, description, icon, color for each merge method
+- `createConfirmDialog()` - Builds modal DOM with event handlers
 - `detectMergeType()` - Determines merge type from button text or form action
-- `interceptMergeButton()` - Attaches click handler that shows dialog, uses data attributes to track state
-- `findAndInterceptMergeButtons()` - Queries multiple selectors to find GitHub merge buttons
-- `observeDOM()` - MutationObserver to handle GitHub's SPA navigation and dynamic content
 
-**styles.css** - Dialog styling with dark mode support via `prefers-color-scheme` media query and GitHub's `data-color-mode`/`data-dark-theme` attributes.
+**entrypoints/content.ts**
+- `interceptMergeButton()` - Attaches click handler that shows dialog
+- `findAndInterceptMergeButtons()` - Queries selectors to find GitHub merge buttons
+- `observeDOM()` - MutationObserver for GitHub's SPA navigation
 
-**manifest.json** - Manifest V3 configuration, content script runs on `github.com/*`.
+**assets/styles.css**
+- Dark mode support via `prefers-color-scheme` and GitHub's `data-color-mode` attribute
