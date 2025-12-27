@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { waitFor } from '@testing-library/dom';
 
 // Import content script (WXT globals are mocked in vitest.setup.ts)
 import './content';
@@ -219,9 +220,9 @@ describe('content script', () => {
       document.body.appendChild(button);
 
       // Wait for MutationObserver to trigger
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      expect(button.dataset.carefulMergeIntercepted).toBe('true');
+      await waitFor(() => {
+        expect(button.dataset.carefulMergeIntercepted).toBe('true');
+      });
     });
   });
 });
