@@ -66,8 +66,8 @@ describe('createConfirmDialog', () => {
   let onCancel: () => void;
 
   beforeEach(() => {
-    onConfirm = vi.fn<() => void>();
-    onCancel = vi.fn<() => void>();
+    onConfirm = vi.fn();
+    onCancel = vi.fn();
     document.body.innerHTML = '';
   });
 
@@ -150,5 +150,102 @@ describe('createConfirmDialog', () => {
 
     const confirmBtn = overlay.querySelector('.careful-merge-btn-confirm') as HTMLButtonElement;
     expect(confirmBtn.textContent?.trim()).toBe('Confirm Rebase and merge');
+  });
+
+  it('should fallback to merge type for invalid mergeType', () => {
+    // @ts-expect-error Testing invalid input
+    const overlay = createConfirmDialog('invalid', onConfirm, onCancel);
+    document.body.appendChild(overlay);
+
+    // Should fallback to merge type
+    expect(screen.getByText('Merge commit')).toBeTruthy();
+    expect(screen.getByText('Preserves all commits and creates a merge commit')).toBeTruthy();
+  });
+
+  describe('focus trap', () => {
+    it('should trap focus from last to first element on Tab', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      const confirmBtn = overlay.querySelector('.careful-merge-btn-confirm') as HTMLButtonElement;
+      const cancelBtn = overlay.querySelector('.careful-merge-btn-cancel') as HTMLButtonElement;
+
+      confirmBtn.focus();
+      expect(document.activeElement).toBe(confirmBtn);
+
+      const tabEvent = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
+      document.dispatchEvent(tabEvent);
+
+      expect(document.activeElement).toBe(cancelBtn);
+    });
+
+    it('should trap focus from first to last element on Shift+Tab', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      const confirmBtn = overlay.querySelector('.careful-merge-btn-confirm') as HTMLButtonElement;
+      const cancelBtn = overlay.querySelector('.careful-merge-btn-cancel') as HTMLButtonElement;
+
+      cancelBtn.focus();
+      expect(document.activeElement).toBe(cancelBtn);
+
+      const shiftTabEvent = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true });
+      document.dispatchEvent(shiftTabEvent);
+
+      expect(document.activeElement).toBe(confirmBtn);
+    });
+  });
+
+  describe('cleanup', () => {
+    it('should remove keydown event listener after confirm', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      const confirmBtn = overlay.querySelector('.careful-merge-btn-confirm') as HTMLButtonElement;
+      confirmBtn.click();
+
+      // After cleanup, Escape should not trigger onCancel again
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('should remove keydown event listener after cancel', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      const cancelBtn = overlay.querySelector('.careful-merge-btn-cancel') as HTMLButtonElement;
+      cancelBtn.click();
+
+      // Reset mock to check if Escape triggers it again
+      vi.mocked(onCancel).mockClear();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('should remove keydown event listener after overlay click', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      overlay.click();
+
+      vi.mocked(onCancel).mockClear();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(onCancel).not.toHaveBeenCalled();
+    });
+
+    it('should remove keydown event listener after Escape', () => {
+      const overlay = createConfirmDialog('merge', onConfirm, onCancel);
+      document.body.appendChild(overlay);
+
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      vi.mocked(onCancel).mockClear();
+      document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+      expect(onCancel).not.toHaveBeenCalled();
+    });
   });
 });
