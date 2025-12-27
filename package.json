@@ -8,12 +8,17 @@
     "build": "wxt build",
     "zip": "wxt zip",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "devDependencies": {
     "@storybook/html-vite": "^10.1.10",
+    "@testing-library/dom": "^10.4.1",
+    "jsdom": "^27.4.0",
     "storybook": "^10.1.10",
     "typescript": "^5.7.0",
+    "vitest": "^4.0.16",
     "wxt": "^0.20.0"
   },
   "license": "MIT",
