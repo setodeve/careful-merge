@@ -146,6 +146,13 @@
     return /\/pull\/\d+/.test(window.location.pathname);
   }
 
+  // Confirmマージボタンかどうかを判定（テキストベース）
+  function isConfirmMergeButton(button) {
+    const text = button.textContent.trim();
+    // "Confirm merge", "Confirm squash and merge", "Confirm rebase and merge"
+    return /^Confirm\s+(merge|squash|rebase)/i.test(text);
+  }
+
   // マージボタンを検索してインターセプト
   function findAndInterceptMergeButtons() {
     // PRの詳細ページでのみ動作
@@ -153,26 +160,22 @@
       return;
     }
 
-    // GitHub の各種マージボタンセレクタ
-    const selectors = [
-      // 新しいUIのマージボタン
-      'button[data-details-container=".js-merge-pr"]',
-      '.merge-box-button',
-      '.js-merge-commit-button',
-      // マージフォームの送信ボタン
-      '.js-merge-box button[type="submit"]',
-      'button.js-merge-commit-button',
-      // ドロップダウンからのマージボタン
-      '.select-menu-item[data-merge-method]',
-      // 最新のGitHub UI
+    // 方法1: data-variant="primary" のボタンでConfirmテキストを持つもの（最新UI）
+    document.querySelectorAll('button[data-variant="primary"]').forEach((button) => {
+      if (button.disabled) return;
+      if (isConfirmMergeButton(button)) {
+        interceptMergeButton(button);
+      }
+    });
+
+    // 方法2: 従来のセレクタ（フォールバック）
+    const fallbackSelectors = [
       'button[data-octo-click="merge_pull_request"]',
-      '.js-merge-pr button[type="submit"]',
-      // マージボタン全般
-      '[class*="merge"] button[type="submit"]:not([data-careful-merge-intercepted])',
-      'form[action*="merge"] button[type="submit"]:not([data-careful-merge-intercepted])'
+      '.js-merge-commit-button',
+      '.js-merge-box button[type="submit"]'
     ];
 
-    selectors.forEach((selector) => {
+    fallbackSelectors.forEach((selector) => {
       document.querySelectorAll(selector).forEach((button) => {
         if (button.disabled) return;
         interceptMergeButton(button);
