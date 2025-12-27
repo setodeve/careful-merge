@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/dom';
-import { MERGE_TYPES, createConfirmDialog, detectMergeType } from './ConfirmDialog';
+import { MERGE_TYPES, createConfirmDialog, detectMergeType } from '../components/ConfirmDialog';
 
 describe('MERGE_TYPES', () => {
   it('should have all three merge types defined', () => {
