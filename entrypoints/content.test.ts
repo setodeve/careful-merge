@@ -158,8 +158,8 @@ describe('content script', () => {
       const dialog = document.querySelector('.careful-merge-overlay');
       expect(dialog).toBeNull();
 
-      // Button should be marked as confirmed
-      expect(button.dataset.carefulMergeConfirmed).toBe('false'); // Reset after click
+      // Confirmed flag should be reset after the click completes
+      expect(button.dataset.carefulMergeConfirmed).toBe('false');
     });
   });
 
