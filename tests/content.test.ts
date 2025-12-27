@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { waitFor } from '@testing-library/dom';
 
 // Import content script (WXT globals are mocked in vitest.setup.ts)
-import './content';
+import '../entrypoints/content';
 
 // Get the main function stored by the mock
 const getContentScriptMain = () =>
