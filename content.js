@@ -141,8 +141,18 @@
     }, true);
   }
 
+  // PRの詳細ページかどうかを判定
+  function isPullRequestPage() {
+    return /\/pull\/\d+/.test(window.location.pathname);
+  }
+
   // マージボタンを検索してインターセプト
   function findAndInterceptMergeButtons() {
+    // PRの詳細ページでのみ動作
+    if (!isPullRequestPage()) {
+      return;
+    }
+
     // GitHub の各種マージボタンセレクタ
     const selectors = [
       // 新しいUIのマージボタン
