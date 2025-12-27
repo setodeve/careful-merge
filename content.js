@@ -1,30 +1,30 @@
-// Careful Merge - GitHub PR マージ確認拡張機能
+// Careful Merge - GitHub PR merge confirmation extension
 (function () {
   'use strict';
 
-  // マージタイプの定義
+  // Merge type definitions
   const MERGE_TYPES = {
     merge: {
       name: 'Merge commit',
-      description: 'すべてのコミットを保持してマージコミットを作成します',
+      description: 'Preserves all commits and creates a merge commit',
       icon: '🔀',
       color: '#238636'
     },
     squash: {
       name: 'Squash and merge',
-      description: 'すべてのコミットを1つにまとめてマージします',
+      description: 'Combines all commits into one and merges',
       icon: '📦',
       color: '#8957e5'
     },
     rebase: {
       name: 'Rebase and merge',
-      description: 'コミットをベースブランチにリベースしてマージします',
+      description: 'Rebases commits onto the base branch and merges',
       icon: '📐',
       color: '#bf8700'
     }
   };
 
-  // 確認ダイアログを作成
+  // Create confirmation dialog
   function createConfirmDialog(mergeType, onConfirm, onCancel) {
     const typeInfo = MERGE_TYPES[mergeType] || MERGE_TYPES.merge;
 
@@ -37,26 +37,26 @@
     dialog.innerHTML = `
       <div class="careful-merge-header">
         <span class="careful-merge-icon">${typeInfo.icon}</span>
-        <h2>マージ方法の確認</h2>
+        <h2>Confirm Merge Method</h2>
       </div>
       <div class="careful-merge-content">
         <div class="careful-merge-type" style="border-left: 4px solid ${typeInfo.color}">
           <strong>${typeInfo.name}</strong>
           <p>${typeInfo.description}</p>
         </div>
-        <p class="careful-merge-question">この方法でマージしてもよろしいですか？</p>
+        <p class="careful-merge-question">Are you sure you want to proceed with this merge method?</p>
       </div>
       <div class="careful-merge-actions">
-        <button class="careful-merge-btn careful-merge-btn-cancel">キャンセル</button>
+        <button class="careful-merge-btn careful-merge-btn-cancel">Cancel</button>
         <button class="careful-merge-btn careful-merge-btn-confirm" style="background-color: ${typeInfo.color}">
-          ${typeInfo.name} を実行
+          Confirm ${typeInfo.name}
         </button>
       </div>
     `;
 
     overlay.appendChild(dialog);
 
-    // イベントリスナー
+    // Event listeners
     const cancelBtn = dialog.querySelector('.careful-merge-btn-cancel');
     const confirmBtn = dialog.querySelector('.careful-merge-btn-confirm');
 
@@ -70,7 +70,7 @@
       onConfirm();
     });
 
-    // オーバーレイクリックでキャンセル
+    // Cancel on overlay click
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         overlay.remove();
@@ -78,7 +78,7 @@
       }
     });
 
-    // Escキーでキャンセル
+    // Cancel on Escape key
     const handleEsc = (e) => {
       if (e.key === 'Escape') {
         overlay.remove();
@@ -91,7 +91,7 @@
     return overlay;
   }
 
-  // マージタイプを検出
+  // Detect merge type from button
   function detectMergeType(button) {
     const buttonText = button.textContent.toLowerCase();
     const formAction = button.closest('form')?.action || '';
@@ -105,7 +105,7 @@
     return 'merge';
   }
 
-  // マージボタンにインターセプターを追加
+  // Add interceptor to merge button
   function interceptMergeButton(button) {
     if (button.dataset.carefulMergeIntercepted) {
       return;
@@ -113,7 +113,7 @@
     button.dataset.carefulMergeIntercepted = 'true';
 
     button.addEventListener('click', (e) => {
-      // 既に確認済みの場合はスキップ
+      // Skip if already confirmed
       if (button.dataset.carefulMergeConfirmed === 'true') {
         button.dataset.carefulMergeConfirmed = 'false';
         return;
@@ -126,14 +126,14 @@
 
       const dialog = createConfirmDialog(
         mergeType,
-        // 確認時
+        // On confirm
         () => {
           button.dataset.carefulMergeConfirmed = 'true';
           button.click();
         },
-        // キャンセル時
+        // On cancel
         () => {
-          // 何もしない
+          // Do nothing
         }
       );
 
@@ -141,26 +141,26 @@
     }, true);
   }
 
-  // PRの詳細ページかどうかを判定
+  // Check if current page is a pull request page
   function isPullRequestPage() {
     return /\/pull\/\d+/.test(window.location.pathname);
   }
 
-  // Confirmマージボタンかどうかを判定（テキストベース）
+  // Check if button is a confirm merge button (text-based)
   function isConfirmMergeButton(button) {
     const text = button.textContent.trim();
     // "Confirm merge", "Confirm squash and merge", "Confirm rebase and merge"
     return /^Confirm\s+(merge|squash|rebase)/i.test(text);
   }
 
-  // マージボタンを検索してインターセプト
+  // Find and intercept merge buttons
   function findAndInterceptMergeButtons() {
-    // PRの詳細ページでのみ動作
+    // Only run on pull request pages
     if (!isPullRequestPage()) {
       return;
     }
 
-    // 方法1: data-variant="primary" のボタンでConfirmテキストを持つもの（最新UI）
+    // Method 1: data-variant="primary" buttons with Confirm text (latest UI)
     document.querySelectorAll('button[data-variant="primary"]').forEach((button) => {
       if (button.disabled) return;
       if (isConfirmMergeButton(button)) {
@@ -168,7 +168,7 @@
       }
     });
 
-    // 方法2: 従来のセレクタ（フォールバック）
+    // Method 2: Fallback selectors for older GitHub UI
     const fallbackSelectors = [
       'button[data-octo-click="merge_pull_request"]',
       '.js-merge-commit-button',
@@ -183,7 +183,7 @@
     });
   }
 
-  // MutationObserverでDOMの変更を監視
+  // Observe DOM changes with MutationObserver
   function observeDOM() {
     const observer = new MutationObserver((mutations) => {
       let shouldCheck = false;
@@ -204,13 +204,13 @@
     });
   }
 
-  // 初期化
+  // Initialize
   function init() {
     findAndInterceptMergeButtons();
     observeDOM();
   }
 
-  // ページ読み込み後に初期化
+  // Run after page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
