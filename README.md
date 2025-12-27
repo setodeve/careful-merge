@@ -1,6 +1,4 @@
-# Careful Merge
-
-[日本語版はこちら](README_ja.md)
+![Careful Merge](assets/readme.png)
 
 A Chrome extension that displays a confirmation dialog when clicking merge buttons on GitHub pull requests, showing the selected merge method before proceeding.
 
@@ -74,4 +72,4 @@ careful-merge/
 
 ## License
 
-MIT License
+This project is licensed under the [MIT License](LICENSE).
