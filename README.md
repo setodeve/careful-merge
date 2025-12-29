@@ -45,6 +45,10 @@ pnpm storybook       # Preview components in Storybook
 | Squash and merge   | Combines all commits into one and merges          |
 | Rebase and merge   | Rebases commits onto the base branch and merges   |
 
+## Storybook
+
+Component documentation is available at **[Storybook](https://setodeve.github.io/careful-merge/)**.
+
 ## Tech Stack
 
 - [WXT](https://wxt.dev/) - web extension framework
